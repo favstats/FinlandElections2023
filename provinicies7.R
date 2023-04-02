@@ -16,33 +16,33 @@ more_data <- dir("data/reports", full.names = T) %>%
     mutate(spend = readr::parse_number(amount_spent_eur)) %>%
     mutate(spend = ifelse(spend == 100, 50, spend)) %>%
     distinct(page_id, .keep_all = T)  %>%
-  mutate(party1 = case_when(
-    str_detect(page_name, "\\bKOK\\b") ~ "KOK",
-    str_detect(page_name, "\\bVIH\\b") ~ "VIH",
-    str_detect(page_name, "\\bVAS\\b") ~ "VAS",
-    str_detect(page_name, "\\bPER\\b") ~ "PER",
-    str_detect(page_name, "\\bMUUT\\b") ~"MUUT",
-    str_detect(page_name, "\\bKES\\b") ~ "KES",
-    str_detect(page_name, "\\bSDP\\b") ~ "SDP",
-    str_detect(page_name, "\\bRKP\\b") ~ "KD",
-    str_detect(page_name, "\\bKOR\\b") ~ "KOR",
-    T ~ NA_character_
-  ))%>%
-    mutate(party2 = case_when(
-      str_detect(disclaimer, "\\bKOK\\b") ~ "KOK",
-      str_detect(disclaimer, "\\bVIH\\b") ~ "VIH",
-      str_detect(disclaimer, "\\bVAS\\b") ~ "VAS",
-      str_detect(disclaimer, "\\bPER\\b") ~ "PER",
-      str_detect(disclaimer, "\\bMUUT\\b") ~ "MUUT",
-      str_detect(disclaimer, "\\bKES\\b") ~ "KES",
-      str_detect(disclaimer, "\\bSDP\\b") ~ "SDP",
-      str_detect(disclaimer, "\\bRKP\\b") ~ "KD",
-      str_detect(disclaimer, "\\bKOR\\b") ~ "KOR",
-      T ~ NA_character_
-    )) %>%
-    mutate(party = ifelse(is.na(party1), party2, party1)) %>%
-    drop_na(party) %>%
-    distinct(page_id, .keep_all = T) %>%
+  # mutate(party1 = case_when(
+  #   str_detect(page_name, "\\bKOK\\b") ~ "KOK",
+  #   str_detect(page_name, "\\bVIH\\b") ~ "VIH",
+  #   str_detect(page_name, "\\bVAS\\b") ~ "VAS",
+  #   str_detect(page_name, "\\bPER\\b") ~ "PER",
+  #   str_detect(page_name, "\\bMUUT\\b") ~"MUUT",
+  #   str_detect(page_name, "\\bKES\\b") ~ "KES",
+  #   str_detect(page_name, "\\bSDP\\b") ~ "SDP",
+  #   str_detect(page_name, "\\bRKP\\b") ~ "KD",
+  #   str_detect(page_name, "\\bKOR\\b") ~ "KOR",
+  #   T ~ NA_character_
+  # ))%>%
+  #   mutate(party2 = case_when(
+  #     str_detect(disclaimer, "\\bKOK\\b") ~ "KOK",
+  #     str_detect(disclaimer, "\\bVIH\\b") ~ "VIH",
+  #     str_detect(disclaimer, "\\bVAS\\b") ~ "VAS",
+  #     str_detect(disclaimer, "\\bPER\\b") ~ "PER",
+  #     str_detect(disclaimer, "\\bMUUT\\b") ~ "MUUT",
+  #     str_detect(disclaimer, "\\bKES\\b") ~ "KES",
+  #     str_detect(disclaimer, "\\bSDP\\b") ~ "SDP",
+  #     str_detect(disclaimer, "\\bRKP\\b") ~ "KD",
+  #     str_detect(disclaimer, "\\bKOR\\b") ~ "KOR",
+  #     T ~ NA_character_
+  #   )) %>%
+  #   mutate(party = ifelse(is.na(party1), party2, party1)) %>%
+  #   drop_na(party) %>%
+  #   distinct(page_id, .keep_all = T) %>%
     filter(str_detect(page_name, "Global Space Conference on Climate Change|de Alliantie|PvdA - GroenLinks", negate = T)) %>%
     mutate(page_id = as.character(page_id))
 
@@ -88,7 +88,7 @@ dir.create("provincies/30")
 # internal_page_ids %>%
 #     count(party, sort = T) %>% View
 
-wtm_data <- read_csv("data/wtm-advertisers-fi-2023-03-17T05_04_23.308Z.csv") %>% #names
+wtm_data <- read_csv("data/wtm-advertisers-fi-2023-04-01T23_43_47.277Z.csv") %>% #names
     select(page_id = advertisers_platforms.advertiser_platform_ref,
            page_name = name, party = entities.short_name)  %>%
     mutate(page_id = as.character(page_id)) 
@@ -120,7 +120,7 @@ all_dat <- #read_csv("nl_advertisers.csv") %>%
     # bind_rows(internal_page_ids) %>%
     bind_rows(wtm_data) %>%
     # bind_rows(rep) %>%
-    bind_rows(more_data %>% mutate(source = "new")) %>%
+    # bind_rows(more_data %>% mutate(source = "new")) %>%
     distinct(page_id, .keep_all = T) %>%
     add_count(page_name, sort  =T) %>%
     mutate(remove_em = n >= 2 & str_ends(page_id, "0")) %>%
@@ -129,8 +129,8 @@ all_dat <- #read_csv("nl_advertisers.csv") %>%
     # filter(n >= 2 & str_ends(page_id, "0", negate = T)) %>%
     select(-n)  
 
-all_dat %>% filter(source == "new") %>% View
-
+# all_dat %>% filter(source == "new") %>% View
+all_dat %>% View
 
 # all_dat %>%
 #     filter(party == "And") %>% View
@@ -297,7 +297,7 @@ saveRDS(da7, "data/election_dat7.rds")
 
 da30 %>% count(ds)
 da7 %>% count(ds)
-
+  
 # bbb %>% filter(str_detect(funding_, "Strijker"))
 
 # da7 %>%
